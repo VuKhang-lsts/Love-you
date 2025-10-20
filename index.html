@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Em, Cả Một Dải Ngân Hà!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            background: #0c001f;
+            color: #f0e6ff;
+        }
+        #starry-sky-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .font-dancing {
+            font-family: 'Dancing Script', cursive;
+        }
+        #main-container {
+            box-shadow: 0 0 45px rgba(236, 72, 153, 0.3), 0 0 25px rgba(168, 85, 247, 0.3);
+            background: rgba(23, 10, 40, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.5s ease;
+        }
+        .card {
+            transform-style: preserve-3d;
+            transition: transform 1s;
+        }
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .btn {
+            font-weight: bold;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+            color: white;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #ec4899, #d946ef);
+        }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #a855f7, #8b5cf6);
+        }
+        .btn-secondary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Hiệu ứng trái tim rơi */
+        .heart {
+            position: absolute;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff8fab"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 30px;
+            height: 30px;
+            top: -50px;
+            opacity: 0;
+            pointer-events: none;
+            /* Thay đổi: Bỏ hiệu ứng sway, chỉ còn fall */
+            animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(105vh); opacity: 1; } }
+        
+        .glowing-heart {
+            color: #ff0055;
+            animation: glow 1.5s ease-in-out infinite alternate;
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 30px #ff0055, 0 0 40px #ff4d94, 0 0 50px #ff4d94, 0 0 60px #ff4d94, 0 0 70px #ff4d94;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 30px #ff0055, 0 0 40px #ff4d94; }
+            to { text-shadow: 0 0 20px #ff0055, 0 0 30px #ff4d94, 0 0 40px #ff4d94, 0 0 50px #ff4d94, 0 0 60px #ff4d94; }
+        }
+
+        .step { display: none; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .step.active { display: block; opacity: 1; }
+        .fade-in { animation: fadeIn 2s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Typing Effect */
+        #letter-content::after {
+            content: '▋';
+            color: #f0e6ff;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { from, to { opacity: 0; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <canvas id="starry-sky-canvas"></canvas>
+
+    <div id="main-container" class="w-full max-w-lg mx-auto text-center p-8">
+        <div id="container">
+            <!-- Bước 1: Hộp quà bí ẩn -->
+            <div id="step1" class="step active">
+                <h1 class="text-4xl md:text-5xl font-dancing mb-4">Gửi em, cô gái của anh!</h1>
+                <p class="mb-8 text-lg">Anh có một món quà bất ngờ dành cho em nhân ngày 20/10...</p>
+                <button id="openGiftBtn" class="btn btn-primary text-xl">Mở quà</button>
+            </div>
+            <!-- Bước 2: Lật thiệp và lời chúc đầu tiên -->
+            <div id="step2" class="step">
+                 <div id="cardContainer" class="w-full aspect-video perspective-1000">
+                    <div id="card" class="card relative w-full h-full">
+                        <div class="card-face absolute w-full h-full flex flex-col items-center justify-center bg-transparent">
+                            <h2 class="font-dancing text-4xl mb-4">Mở ra nào...</h2>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                            <p class="mt-4 text-sm">(Nhấn vào thiệp để xem nhé)</p>
+                        </div>
+                        <div class="card-face card-back absolute w-full h-full flex flex-col items-center justify-center bg-transparent">
+                            <h2 class="font-dancing text-3xl md:text-4xl mb-2">Chúc mừng 20/10!</h2>
+                            <p class="text-lg">Chúc em, tình yêu của anh,</p>
+                            <p class="text-lg">Một ngày thật nhiều niềm vui và hạnh phúc.</p>
+                            <button id="nextBtn2" class="mt-8 btn btn-secondary">Xem tiếp &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Bước 3: Hình ảnh và lời nhắn -->
+            <div id="step3" class="step fade-in">
+                <h2 class="font-dancing text-4xl mb-4">Mỗi khoảnh khắc...</h2>
+                <p class="mb-6 text-lg">...đều là một kỷ niệm ngọt ngào khi có em bên cạnh.</p>
+                <img src="a.jpg" alt="Kỷ niệm của chúng ta" class="rounded-2xl shadow-lg mx-auto w-full max-w-xs aspect-square object-cover mb-6 border-4 border-white/50">
+                <button id="nextBtn3" class="btn btn-primary text-xl">Lời nhắn từ trái tim</button>
+            </div>
+            <!-- Bước 4: Lá thư chân thành -->
+            <div id="step4" class="step fade-in">
+                 <h2 class="font-dancing text-4xl mb-4">Gửi Đào Lê Thanh Loan,</h2>
+                 <div id="letter-content" class="text-left text-base md:text-lg leading-relaxed min-h-[250px]"></div>
+                 <button id="nextBtn4" class="mt-8 btn btn-secondary opacity-0 transition-opacity duration-1000">Và cuối cùng...</button>
+            </div>
+            <!-- Bước 5: Lời kết -->
+            <div id="step5" class="step fade-in">
+                <div class="glowing-heart text-8xl md:text-9xl mb-6">&hearts;</div>
+                <h2 class="font-dancing text-5xl md:text-6xl mb-4">Yêu Em Rất Nhiều</h2>
+                <p class="text-xl">Happy Vietnamese Women's Day!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CÀI ĐẶT ---
+        const letterText = `Mỗi ngày có em đều là một ngày đặc biệt. Nhưng hôm nay là một ngày để anh có thể nói rằng anh yêu em nhiều hơn nữa. Em giống như một vì sao sáng nhất trên bầu trời của anh, luôn dẫn lối và sưởi ấm trái tim anh.
+        <br/><br/>
+        Cảm ơn em đã đến, đã ở lại và đã cùng anh đi qua những ngày tháng tươi đẹp. Em không chỉ là người anh yêu, mà còn là người bạn đồng hành, là nguồn động lực vô tận của anh.
+        <br/><br/>
+        Chúc em một ngày 20/10 luôn xinh đẹp, rạng rỡ và mãi là cô gái hạnh phúc nhất nhé!`;
+
+        // --- CODE CHÍNH ---
+        const steps = document.querySelectorAll('.step');
+        const openGiftBtn = document.getElementById('openGiftBtn');
+        const cardContainer = document.getElementById('cardContainer');
+        const card = document.getElementById('card');
+        const nextBtn2 = document.getElementById('nextBtn2');
+        const nextBtn3 = document.getElementById('nextBtn3');
+        const nextBtn4 = document.getElementById('nextBtn4');
+        const letterContentEl = document.getElementById('letter-content');
+        
+        let currentStep = 0;
+        let isTyping = false;
+
+        function showStep(stepIndex) {
+            steps.forEach((step, index) => step.classList.toggle('active', index === stepIndex));
+            currentStep = stepIndex;
+            if (stepIndex === 3 && !isTyping) {
+                typeWriter(letterText, letterContentEl, 50);
+            }
+        }
+        
+        function typeWriter(txt, element, speed) {
+            isTyping = true;
+            element.innerHTML = '';
+            let i = 0;
+            function type() {
+                if (i < txt.length) {
+                    // Check for <br/> tag
+                    if (txt.substring(i, i + 5) === '<br/>') {
+                        element.innerHTML += '<br/>';
+                        i += 5;
+                    } else {
+                        element.innerHTML += txt.charAt(i);
+                        i++;
+                    }
+                    setTimeout(type, speed);
+                } else {
+                    isTyping = false;
+                    nextBtn4.style.opacity = '1';
+                }
+            }
+            type();
+        }
+
+        openGiftBtn.addEventListener('click', () => {
+            showStep(1);
+            // Bắt đầu hiệu ứng mưa trái tim rơi liên tục
+            setInterval(createHeart, 20); // Tạo một trái tim mới mỗi 20ms để thực sự "tràn ngập"
+        });
+        
+        cardContainer.addEventListener('click', () => card.classList.toggle('flipped'));
+        
+        nextBtn2.addEventListener('click', () => showStep(2));
+        nextBtn3.addEventListener('click', () => showStep(3));
+        nextBtn4.addEventListener('click', () => showStep(4));
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            document.body.appendChild(heart);
+            
+            const fallDuration = Math.random() * 6 + 4; // 4-10s, rơi nhanh hơn một chút
+            
+            heart.style.left = `${Math.random() * 100}vw`;
+            // Thay đổi: Chỉ còn hiệu ứng rơi thẳng xuống
+            heart.style.animation = `fall ${fallDuration}s linear forwards`;
+            const size = Math.random() * 20 + 10;
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            
+            setTimeout(() => heart.remove(), fallDuration * 1000);
+        }
+
+        // Starry Sky Background
+        const canvas = document.getElementById('starry-sky-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let numStars = 300;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for(let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random() * 0.5 + 0.5,
+                    vx: Math.random() * 0.2 - 0.1,
+                    vy: Math.random() * 0.2 - 0.1
+                });
+            }
+        }
+        
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            stars.forEach(star => {
+                ctx.globalAlpha = star.alpha;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        function updateStars() {
+            stars.forEach(star => {
+                star.x += star.vx;
+                star.y += star.vy;
+                if (star.x < 0 || star.x > canvas.width) star.vx = -star.vx;
+                if (star.y < 0 || star.y > canvas.height) star.vy = -star.vy;
+            });
+        }
+        
+        function animate() {
+            drawStars();
+            updateStars();
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animate();
+    </script>
+</body>
+</html>
